@@ -19,12 +19,13 @@ for line in lines:
         image = cv2.imread(current_path)
         images.append(image)
         measurement = float(line[3])
+        correction = 0.2
         if i == 0:
             measurements.append(measurement)
         elif i == 1:
-            measurements.append(measurement+0.2)
+            measurements.append(measurement + correction)
         else:
-            measurements.append(measurement-0.2)
+            measurements.append(measurement - correction)
 
 augmented_images, augmented_measurements = [], []
 for image, measurement in zip(images, measurements):
@@ -56,7 +57,7 @@ model.add(Dense(1))
 
 model.compile(loss='mse', optimizer='adam')
 model.fit(X_train, y_train, validation_split=0.2,
-    shuffle=True, nb_epoch=5)
+    shuffle=True, nb_epoch=10)
 
-model.save('model.h5')
+model.save('model_lenet.h5')
 exit()
