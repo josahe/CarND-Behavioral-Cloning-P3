@@ -7,13 +7,8 @@ def open_csv_file(csv_file):
     lines=[]
     with open(csv_file) as csvfile:
         reader = csv.reader(csvfile)
-        i=0
         for line in reader:
-            if   line[3] != 0:
-                lines.append(line)
-            elif line[3] == 0 and i%5 == 0: # throw away 80% of data with 0 angle steering
-                lines.append(line)
-                i+=1
+            lines.append(line)
     lines = lines[1:]
     return lines
 
@@ -41,6 +36,7 @@ def augment_images(in_images, in_measurements, out_images, out_measurements):
     for image, measurement in zip(in_images, in_measurements):
         out_images.append(image)
         out_measurements.append(measurement)
+        #if measurement != 0.: # dont flip images with zero steering angle
         out_images.append(cv2.flip(image,1))
         out_measurements.append(measurement*-1.0)
 
@@ -51,14 +47,14 @@ def generator(samples, batch_size=32):
             aug_images=[]
             aug_angles=[]
             batch_samples = samples[offset : offset + batch_size]
-            images, angles = import_images(batch_samples, '../car-sim-data/IMG/')
+            images, angles = import_images(batch_samples, '../car-sim-data_reduced/IMG/')
             augment_images(images, angles, aug_images, aug_angles)
             X_train = np.array(aug_images)
             y_train = np.array(aug_angles)
             yield sklearn.utils.shuffle(X_train, y_train)
 
 
-samples = open_csv_file('../car-sim-data/driving_log.csv')
+samples = open_csv_file('../car-sim-data_reduced/driving_log.csv')
 
 from sklearn.model_selection import train_test_split
 train_samples, validation_samples = train_test_split(samples, test_size=0.2)
@@ -88,10 +84,19 @@ model.add(Dense(50))
 model.add(Dense(10))
 model.add(Dense(1))
 
+#len_train_samples_zero = 0
+#len_train_samples_nonzero = 0
+#for line in samples:
+#    if float(line[3]) == 0.:
+#        len_train_samples_zero+=1
+#    else:
+#        len_train_samples_nonzero+=1
+#len_train_samples = 3*2*len_train_samples_zero + 3*2*len_train_samples_nonzero
+
 model.compile(loss='mse', optimizer='adam')
 model.fit_generator(train_generator, samples_per_epoch=3*2*len(train_samples),
     validation_data=validation_generator, nb_val_samples=3*2*len(validation_samples),
-    nb_epoch=3)
+    nb_epoch=10)
 
 
 model.save('model.h5')
