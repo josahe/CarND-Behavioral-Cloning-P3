@@ -72,9 +72,9 @@ class SimplePIDController:
                self.Kd * self.derivative
 
 
-#controller = SimplePIController(0.1, 0.002)
-controller = SimplePIDController(0.1, 0.002, 0.005)
-set_speed = 20
+controller = SimplePIController(0.1, 0.002)
+#controller = SimplePIDController(0.1, 0.002, 0.005)
+set_speed = 12
 controller.set_desired(set_speed)
 
 
