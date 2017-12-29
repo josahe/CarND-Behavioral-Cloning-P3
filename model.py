@@ -45,14 +45,14 @@ def flatten_histogram(samples):
     for line in samples:
         val = float(line[3])
         if ((val >= -1. and val <= -0.8 and random.random() < 1. ) or
-            (val > -0.8 and val <= -0.6 and random.random() < 0.9) or
-            (val > -0.6 and val <= -0.4 and random.random() < 0.8) or
-            (val > -0.4 and val <= -0.2 and random.random() < 0.5) or
+            (val > -0.8 and val <= -0.6 and random.random() < 1. ) or
+            (val > -0.6 and val <= -0.4 and random.random() < 1. ) or
+            (val > -0.4 and val <= -0.2 and random.random() < 0.6) or
             (val > -0.2 and val <= 0.   and random.random() < 0.2) or
             (val > 0.   and val <= 0.2  and random.random() < 0.2) or
-            (val > 0.2  and val <= 0.4  and random.random() < 0.5) or
-            (val > 0.4  and val <= 0.6  and random.random() < 0.8) or
-            (val > 0.6  and val <= 0.8  and random.random() < 0.9) or
+            (val > 0.2  and val <= 0.4  and random.random() < 0.6) or
+            (val > 0.4  and val <= 0.6  and random.random() < 1. ) or
+            (val > 0.6  and val <= 0.8  and random.random() < 1. ) or
             (val > 0.8  and val <= 1.   and random.random() < 1. )):
             new_samples.append(line)
     return new_samples
@@ -84,6 +84,7 @@ def augment_images(in_images, in_measurements, out_images, out_measurements):
         #if measurement != 0.: # dont flip images with zero steering angle
         out_images.append(cv2.flip(image,1))
         out_measurements.append(measurement*-1.0)
+
 
 def generator(samples, batch_size=32):
     num_samples = len(samples)
@@ -137,9 +138,7 @@ model.add(Dense(50))
 model.add(Dense(10))
 model.add(Dense(1))
 
-adam = Adam(lr=0.0001)
-
-model.compile(loss='mse', optimizer=adam)
+model.compile(loss='mse', optimizer='adam')
 model.fit_generator(train_generator, samples_per_epoch=3*2*len(train_samples),
     validation_data=validation_generator, nb_val_samples=3*2*len(validation_samples),
     nb_epoch=7)
