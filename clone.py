@@ -7,8 +7,13 @@ def open_csv_file(csv_file):
     lines=[]
     with open(csv_file) as csvfile:
         reader = csv.reader(csvfile)
+        i=0
         for line in reader:
-            lines.append(line)
+            if   line[3] != 0:
+                lines.append(line)
+            elif line[3] == 0 and i%5 == 0: # throw away 80% of data with 0 angle steering
+                lines.append(line)
+                i+=1
     lines = lines[1:]
     return lines
 
@@ -23,12 +28,12 @@ def import_images(lines, path):
             image = cv2.imread(current_path)
             images.append(image)
             measurement = float(line[3])
-            correction = 0.2
-            if i == 0:
+            correction = 0.35
+            if   i == 0:
                 measurements.append(measurement)
             elif i == 1:
                 measurements.append(measurement + correction)
-            else:
+            elif i == 2:
                 measurements.append(measurement - correction)
     return images, measurements
 
@@ -54,7 +59,6 @@ def generator(samples, batch_size=32):
 
 
 samples = open_csv_file('../car-sim-data/driving_log.csv')
-
 
 from sklearn.model_selection import train_test_split
 train_samples, validation_samples = train_test_split(samples, test_size=0.2)

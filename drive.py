@@ -42,9 +42,39 @@ class SimplePIController:
 
         return self.Kp * self.error + self.Ki * self.integral
 
+class SimplePIDController:
+    def __init__(self, Kp, Ki, Kd):
+        self.Kp = Kp
+        self.Ki = Ki
+        self.Kd = Kd
+        self.set_point = 0.
+        self.error = 0.
+        self.previous_error = 0.
+        self.integral = 0.
+        self.derivative = 0.
 
-controller = SimplePIController(0.1, 0.002)
-set_speed = 9
+    def set_desired(self, desired):
+        self.set_point = desired
+
+    def update(self, measurement):
+        # proportional error
+        self.error = self.set_point - measurement
+
+        # integral error
+        self.integral += self.error
+
+        # derivative error
+        self.derivative = self.error - self.previous_error
+        self.previous_error = self.error
+
+        return self.Kp * self.error + \
+               self.Ki * self.integral + \
+               self.Kd * self.derivative
+
+
+#controller = SimplePIController(0.1, 0.002)
+controller = SimplePIDController(0.1, 0.002, 0.005)
+set_speed = 20
 controller.set_desired(set_speed)
 
 
