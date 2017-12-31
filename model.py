@@ -13,47 +13,24 @@ def open_csv_file(csv_file):
     lines = lines[1:]
     return lines
 
-def histogram(samples):
-    bins=[0,0,0,0,0,0,0,0,0,0]
-    for line in samples:
-        val = float(line[3])
-        if val >= -1. and val <=-0.8:
-            bins[0]+=1
-        elif val > -0.8 and val <=-0.6:
-            bins[1]+=1
-        elif val > -0.6 and val <=-0.4:
-            bins[2]+=1
-        elif val > -0.4 and val <=-0.2:
-            bins[3]+=1
-        elif val > -0.2 and val <=0.:
-            bins[4]+=1
-        elif val > 0. and val <=0.2:
-            bins[5]+=1
-        elif val > 0.2 and val <=0.4:
-            bins[6]+=1
-        elif val > 0.4 and val <=0.6:
-            bins[7]+=1
-        elif val > 0.6 and val <=0.8:
-            bins[8]+=1
-        elif val > 0.8 and val <=1.:
-            bins[9]+=1
-    print(bins)
-
 def flatten_histogram(samples):
+    """Reduce the number of samples for zero and close-to-zero
+    steering angles.
+    """
     bins=[0,0,0,0,0,0,0,0,0,0]
     new_samples=[]
     for line in samples:
         val = float(line[3])
-        if ((val >= -1. and val <= -0.8 and random.random() < 1. ) or
-            (val > -0.8 and val <= -0.6 and random.random() < 1. ) or
-            (val > -0.6 and val <= -0.4 and random.random() < 1. ) or
-            (val > -0.4 and val <= -0.2 and random.random() < 0.6) or
-            (val > -0.2 and val <= 0.   and random.random() < 0.2) or
-            (val > 0.   and val <= 0.2  and random.random() < 0.2) or
-            (val > 0.2  and val <= 0.4  and random.random() < 0.6) or
-            (val > 0.4  and val <= 0.6  and random.random() < 1. ) or
-            (val > 0.6  and val <= 0.8  and random.random() < 1. ) or
-            (val > 0.8  and val <= 1.   and random.random() < 1. )):
+        if ((val >= -1. and val <= -0.8 and random.random() <= 1. ) or
+            (val > -0.8 and val <= -0.6 and random.random() <= 1. ) or
+            (val > -0.6 and val <= -0.4 and random.random() <= 1. ) or
+            (val > -0.4 and val <= -0.2 and random.random() <= 0.6) or
+            (val > -0.2 and val <= 0.   and random.random() <= 0.2) or
+            (val > 0.   and val <= 0.2  and random.random() <= 0.2) or
+            (val > 0.2  and val <= 0.4  and random.random() <= 0.6) or
+            (val > 0.4  and val <= 0.6  and random.random() <= 1. ) or
+            (val > 0.6  and val <= 0.8  and random.random() <= 1. ) or
+            (val > 0.8  and val <= 1.   and random.random() <= 1. )):
             new_samples.append(line)
     return new_samples
 
@@ -78,15 +55,19 @@ def import_images(lines, path):
     return images, measurements
 
 def augment_images(in_images, in_measurements, out_images, out_measurements):
+    """Perform image augmentation.
+    Currently only flips an image on the vertical axis.
+    """
     for image, measurement in zip(in_images, in_measurements):
         out_images.append(image)
         out_measurements.append(measurement)
-        #if measurement != 0.: # dont flip images with zero steering angle
         out_images.append(cv2.flip(image,1))
         out_measurements.append(measurement*-1.0)
 
-
 def generator(samples, batch_size=32):
+    """Sequentially imports batches of image/measurement data, augments,
+    and returns the data as numpy arrays.
+    """
     num_samples = len(samples)
     while 1:
         for offset in range(0, num_samples, batch_size):
@@ -100,22 +81,21 @@ def generator(samples, batch_size=32):
             yield sklearn.utils.shuffle(X_train, y_train)
 
 
+### Main
+### ----
 samples = open_csv_file('../car-sim-data/driving_log.csv')
 
-
-histogram(samples)
 samples = flatten_histogram(samples)
-histogram(samples)
-
 
 from sklearn.model_selection import train_test_split
 train_samples, validation_samples = train_test_split(samples, test_size=0.1)
-
 
 train_generator = generator(train_samples)
 validation_generator = generator(validation_samples)
 
 
+### Model
+### -----
 from keras.models import Sequential
 from keras.layers import Flatten, Dense, Lambda, Cropping2D
 from keras.layers.convolutional import Convolution2D
@@ -138,11 +118,14 @@ model.add(Dense(50))
 model.add(Dense(10))
 model.add(Dense(1))
 
+
+### Compile/train
+### -------------
 model.compile(loss='mse', optimizer='adam')
 model.fit_generator(train_generator, samples_per_epoch=3*2*len(train_samples),
     validation_data=validation_generator, nb_val_samples=3*2*len(validation_samples),
     nb_epoch=7)
 
-
 model.save('model.h5')
 exit()
+
