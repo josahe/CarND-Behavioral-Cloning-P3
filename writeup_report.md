@@ -16,7 +16,7 @@ The goals / steps of this project are the following:
 [//]: # (Image References)
 
 [image1]: ./examples/cnn_arch_model.png "Final CNN model"
-[image2]: ./examples/centre_lane_driving.gif "Centre lane driving example"
+[image2]: ./examples/centre_lane_driving.png "Centre lane driving example"
 [image3]: ./examples/recovery.gif "Recovery example"
 [image4]: ./examples/flipped.png "Flipped Image"
 [image5]: ./examples/histogram.png "Histogram of datapoints"
