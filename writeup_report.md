@@ -33,6 +33,10 @@ My project includes the following files:
 * model.h5 containing a trained convolution neural network 
 * writeup_report.md summarizing the results
 
+Also included are two videos showing the trained model controlling the simulator:
+* video.mp4 is the first course
+* video_track2.mp4 is the second course
+
 #### 2. Submission includes functional code
 
 Using the Udacity provided simulator and my drive.py file, the car can be driven autonomously around the track by executing:
@@ -58,7 +62,7 @@ The model includes RELU layers to introduce nonlinearity. The data is normalized
 
 #### 2. Attempts to reduce overfitting in the model
 
-The model was trained and validated on different data sets to ensure that the model was not overfitting. The datasets include both available tracks, driving around the first track in both directions and adding some recovery data. The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
+The model was trained and validated on different data sets to ensure that the model was not overfitting. The datasets include both available tracks, driving around the first track in both directions and adding some recovery data. The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track. I also added a small amount of dropout after each of the fully-connected layers.
 
 #### 3. Model parameter tuning
 
