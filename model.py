@@ -97,7 +97,7 @@ validation_generator = generator(validation_samples)
 ### Model
 ### -----
 from keras.models import Sequential
-from keras.layers import Flatten, Dense, Lambda, Cropping2D
+from keras.layers import Flatten, Dense, Dropout, Lambda, Cropping2D
 from keras.layers.convolutional import Convolution2D
 from keras.layers.pooling import MaxPooling2D
 from keras.optimizers import Adam
@@ -113,9 +113,13 @@ model.add(Convolution2D(48,5,5,activation='relu',subsample=(2,2)))
 model.add(Convolution2D(64,3,3,activation='relu'))
 model.add(Convolution2D(64,3,3,activation='relu'))
 model.add(Flatten())
+model.add(Dropout(.2))
 model.add(Dense(100))
+model.add(Dropout(.1))
 model.add(Dense(50))
+model.add(Dropout(.2))
 model.add(Dense(10))
+model.add(Dropout(.1))
 model.add(Dense(1))
 
 
