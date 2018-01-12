@@ -1,15 +1,28 @@
-# Behaviorial Cloning Project
+# Behavioural Cloning Project
+> Cloning simulated human driving behaviour using a CNN
 
-## Overview
----
-This repository contains my modified files for the Udacity Behavioral Cloning Project.
+## INTRODUCTION
+In this project, I used Keras and TensorFlow to implement a convolution neural network that was trained to clone human driving behaviour captured in a simulator. The network was then used to autonomously predict steering angles in the simulator to successfully drive the car around a track. A more detailed write-up is included in this project.
 
-In this project, we had to clone simulated human driving behavior, by training, validating and testing a CNN model using Keras. The model outputs a steering angle to an autonomous vehicle.
+This project was undertaken as part of the [Udacity Self-Driving Car NanoDegree](https://eu.udacity.com/course/self-driving-car-engineer-nanodegree--nd013).
 
+## HOW TO USE
+### Project dependencies
+You can follow the guide explained here to help setup a working environment.
+* https://github.com/udacity/CarND-Term1-Starter-Kit
 
-## Contents
----
-* model.py contains the script to create and train the model
-* model.h5 is my trained convolution neural network
-* writeup_report.md summarises my solution
-* video.mp4 is a demo of the simulation using my trained model
+### Jupyter Notebooks
+The included notebook visualises the dataset/model.
+* [analyse_model.ipynb](analyse_model.ipynb)
+
+## RELEVANT LINKS
+#### Project writeup
+* [writeup.md](writeup.md)
+
+#### Original project repo
+* https://github.com/udacity/CarND-Behavioral-Cloning-P3
+
+## RELEVANT FILES
+* [model.py](model.py) contains the script to create and train the model
+* [model.h5](model.h5) is my trained convolution neural network
+* [video.mp4](video.mp4) is a demo of the simulation using my trained model
